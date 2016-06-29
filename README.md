@@ -28,7 +28,7 @@ Then create a task that uses it:
 ```javascript
 gulp.task('do-something', function() {
 	gulp.src('./app/**/*.json')
-	.pipe(jsonTransform(function(data) {
+	.pipe(jsonTransform(function(data, file) {
 		return {
 			foobar: data.foo + data.bar
 		};
@@ -44,7 +44,10 @@ gulp.task('do-something', function() {
 #### transformFn
 Type: `function`
 
-A function that takes the JSON object input as the only parameter value and should return either a string which is written raw to the file, a JSON object which is stringified or a Promise which resolves to a string or a JSON object.
+A function that takes the JSON object input as the first parameter value and should return either a string which is written raw to the file, a JSON object which is stringified or a Promise which resolves to a string or a JSON object.
+
+A second argument is passed to transformFn, file, which is a Vinyl instance.
+This is useful in case file meta is needed when transforming the JSON.
 
 #### whiteSpace
 

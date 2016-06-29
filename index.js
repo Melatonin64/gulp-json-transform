@@ -1,3 +1,7 @@
+/* global require, module, Buffer */
+
+'use strict';
+
 var Promise = require('promise');
 var through = require('through2');
 var gutil = require('gulp-util');
@@ -18,7 +22,7 @@ function jsonPromiseParse(rawStr) {
 }
 
 module.exports = function(transformFn, jsonSpace) {
-  if (!transformFn) {
+  if (typeof transformFn !== 'function') {
     throw new PluginError(PLUGIN_NAME, 'Missing transform function!');
   }
 
@@ -33,7 +37,9 @@ module.exports = function(transformFn, jsonSpace) {
       var fileContent = file.contents.toString(enc);
 
       jsonPromiseParse(fileContent)
-        .then(transformFn)
+        .then(function(obj) {
+          return transformFn(obj, file);
+        })
         .then(function(output) {
           var isString = (typeof output === 'string');
           file.contents = new Buffer(isString ? output : JSON.stringify(output, null, jsonSpace));
